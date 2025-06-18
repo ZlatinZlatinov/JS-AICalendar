@@ -5,6 +5,12 @@ userController.get('/', (req, res)=>{
 
 }); 
 
+//Get user details
+userController.get('/:userId', (req, res)=>{
+    const userId = req.params.userId;
+
+});
+
 //Create new user
 userController.post('/', (req, res)=>{
 
