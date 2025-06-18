@@ -1,6 +1,7 @@
 const express = require('express'); 
 const cors = require('cors');
 const config = require('./config.js');
+const { routes } = require('./routes.js');
 
 module.exports = (app) => {
     app.use(express.json());
@@ -9,6 +10,8 @@ module.exports = (app) => {
         credentials: true,
         allowedHeaders: 'Content-Type, X-Authorization',
     })); 
+
+    app.use('/api/v1', routes);
 
     app.listen(config.port, ()=> {
         console.log(`Now listening on port ${config.port} ...`);
