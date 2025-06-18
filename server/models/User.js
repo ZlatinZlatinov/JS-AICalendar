@@ -13,14 +13,15 @@ const userSchema = new Schema({
     },
     createdAt: {
         type: String,
-        required: true,
         default: Date.now()
     },
     hashedPassword: {
         type: String,
         required: true
     },
-    // favorites: [{ type: Schema.Types.ObjectId, ref: 'Book' }]
+    address : {
+        type: String
+    }
 }); 
 
 const User = model('User', userSchema); 
