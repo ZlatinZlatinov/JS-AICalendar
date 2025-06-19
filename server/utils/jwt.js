@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const { blackList } = require('./blackList');
 
 //Create new token for user
 function createToken(user) {
@@ -13,6 +14,16 @@ function createToken(user) {
     });
 } 
 
+//Verify token
+function parseToken(token) {
+    if(blackList.has(token)) {
+        throw new Error("Token is blacklisted!");
+    } 
+
+    return jwt.verify(token, process.env.JWT_SECRET);
+}
+
 module.exports = {
-    createToken
+    createToken, 
+    parseToken
 }
