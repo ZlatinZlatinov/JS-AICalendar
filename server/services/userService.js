@@ -1,6 +1,7 @@
-const { User } = require('../models/User');
 const bcrypt = require('bcrypt');
+const { User } = require('../models/User');
 const { createToken } = require('../utils/jwt');
+const { blackList } = require('../utils/blackList');
 
 //Find user by id 
 async function findUserById(userId) {
@@ -13,7 +14,7 @@ async function getAllUsers() {
 }
 
 //Create new user / register
-async function createUser({ username, email, password }) {
+async function createUser({ username, email, password, address }) {
     const isExisting = await User.findOne({ email: userData.email });
 
     if (isExisting) {
@@ -26,10 +27,33 @@ async function createUser({ username, email, password }) {
     const user = await User.create({
         username,
         email,
-        hashedPassword
+        hashedPassword,
+        address
     });
 
     return createToken(user);
+}
+
+//Login user
+async function loginUser({email, password}) {
+    const user = await User.findOne({email}); 
+
+    if(!user) {
+        throw new Error("Wrong email or password!");
+    } 
+
+    const hashedPassword = user.hashedPassword;
+    const match = await bcrypt.compare(password, hashedPassword); 
+
+    if(!match) {
+        throw new Error("Wrong email or password!");
+    } 
+
+    return createToken(user);
+} 
+
+function logout(token) {
+    blackList.add(token);
 }
 
 async function updateUser(userId, userData) {
@@ -49,5 +73,7 @@ module.exports = {
     getAllUsers,
     createUser,
     updateUser, 
-    deleteUser
+    deleteUser, 
+    loginUser,
+    logout
 }
