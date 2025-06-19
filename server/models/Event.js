@@ -30,8 +30,8 @@ const eventSchema = new Schema({
         type: String
     }, 
     createdAt: {
-        type: String,
-        default: Date.now()
+        type: Schema.Types.Date,
+        default: new Date()
     },
     ownerId: {
         type: Schema.Types.ObjectId, 
