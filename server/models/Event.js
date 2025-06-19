@@ -31,7 +31,6 @@ const eventSchema = new Schema({
     }, 
     createdAt: {
         type: String,
-        required: true,
         default: Date.now()
     },
     ownerId: {
