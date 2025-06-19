@@ -14,8 +14,8 @@ async function getAllUsers() {
 }
 
 //Create new user / register
-async function createUser({ username, email, password, address }) {
-    const isExisting = await User.findOne({ email: userData.email });
+async function createUser(username, email, password, address) {
+    const isExisting = await User.findOne({ email });
 
     if (isExisting) {
         throw new Error("This email already exists!");
@@ -35,22 +35,22 @@ async function createUser({ username, email, password, address }) {
 }
 
 //Login user
-async function loginUser({email, password}) {
-    const user = await User.findOne({email}); 
+async function loginUser({ email, password }) {
+    const user = await User.findOne({ email });
 
-    if(!user) {
+    if (!user) {
         throw new Error("Wrong email or password!");
-    } 
+    }
 
     const hashedPassword = user.hashedPassword;
-    const match = await bcrypt.compare(password, hashedPassword); 
+    const match = await bcrypt.compare(password, hashedPassword);
 
-    if(!match) {
+    if (!match) {
         throw new Error("Wrong email or password!");
-    } 
+    }
 
     return createToken(user);
-} 
+}
 
 function logout(token) {
     blackList.add(token);
@@ -61,19 +61,19 @@ async function updateUser(userId, userData) {
         new: true // Returns new data, after document is updated
     }
 
-    return User.findByIdAndUpdate({ _id: userId }, userData, options);
+    return User.findByIdAndUpdate(userId, userData, options);
 }
 
 async function deleteUser(userId) {
-    User.findByIdAndDelete({ _id: userId });
+    return User.findByIdAndDelete(userId);
 }
 
 module.exports = {
     findUserById,
     getAllUsers,
     createUser,
-    updateUser, 
-    deleteUser, 
+    updateUser,
+    deleteUser,
     loginUser,
     logout
 }
