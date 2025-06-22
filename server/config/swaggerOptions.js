@@ -2,7 +2,7 @@ const swaggerOptions = {
     swaggerDefinition: {
         openapi: '3.0.0',
         info: {
-            title: 'Coding Events API',
+            title: 'AI Calendar API',
             version: '1.0.0',
             description: 'API documentation',
         },

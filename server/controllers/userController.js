@@ -20,18 +20,20 @@ const userController = require('express').Router();
  *     description: Returns a list of all users
  *     tags: [Users]
  *     responses:
- *       "200":
+ *       200:
  *         description: A list of users
  *         content:
  *           application/json:
  *             schema:
+ *               type: array
+ *               items:
  *                 $ref: '#/components/schemas/User'
- *       "404":
+ *       404:
  *         description: No users were found
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/responses/404'
+ *               $ref: '#/components/schemas/Error'
  */
 //Get all users
 userController.get('/', async (req, res) => {
@@ -45,6 +47,34 @@ userController.get('/', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /users/{userId}:
+ *   get:
+ *     summary: Get user by their ID
+ *     description: Returns a single user by their ID
+ *     tags: [Users]
+ *     paramethers:
+ *       - in: path
+ *         name: userId
+ *         schema: 
+ *           type: strind
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User details
+ *         content:
+ *           application/json:
+ *             schema:
+ *                 $ref: '#/components/schemas/User'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 //Get user details
 userController.get('/:userId', async (req, res) => {
     const userId = req.params.userId;
@@ -60,9 +90,35 @@ userController.get('/:userId', async (req, res) => {
 
         res.status(404).json({ message: "User not found!" });
     }
-
 });
 
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Create new user
+ *     description: Create a new user account
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content: 
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/CreateUserRequest'
+ *     responses:
+ *       200:
+ *         description: User created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *                 $ref: '#/components/schemas/AuthRespons'
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 //Create new user
 userController.post('/', async (req, res) => {
     const username = req.body.username;
@@ -87,6 +143,46 @@ userController.post('/', async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /users/{userId}:
+ *   put:
+ *     summary: Update user
+ *     description: Updates an existing user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content: 
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateUserRequest'
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *                 $ref: '#/components/schemas/User'
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Conflict
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 //Update user
 userController.put('/:userId', hasUser(), async (req, res) => {
     const userId = req.params.userId;
@@ -104,6 +200,36 @@ userController.put('/:userId', hasUser(), async (req, res) => {
     }
 });
 
+/**
+ * @swagger
+ * /users/{userId}:
+ *   delete:
+ *     summary: Delete user
+ *     description: Deletes a user account
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       204:
+ *         description: User deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 //Delete user
 userController.delete('/:userId', hasUser(), async (req, res) => {
     const userId = req.params.userId;
