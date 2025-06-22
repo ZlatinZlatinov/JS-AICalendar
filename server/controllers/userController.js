@@ -5,6 +5,34 @@ const { erorParser } = require('../utils/errorParser');
 const userController = require('express').Router();
 //TODO: Add user data validation
 
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: API endpoints for managing users
+ */
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     description: Returns a list of all users
+ *     tags: [Users]
+ *     responses:
+ *       "200":
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *                 $ref: '#/components/schemas/User'
+ *       "404":
+ *         description: No users were found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/responses/404'
+ */
 //Get all users
 userController.get('/', async (req, res) => {
     try {
@@ -79,7 +107,7 @@ userController.put('/:userId', hasUser(), async (req, res) => {
 //Delete user
 userController.delete('/:userId', hasUser(), async (req, res) => {
     const userId = req.params.userId;
-    
+
     try {
         await deleteUser(userId);
         res.status(204).json({ message: "User deleted!" });
