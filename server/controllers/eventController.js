@@ -88,7 +88,6 @@ eventController.put('/:eventId', async (req, res) => {
 
         res.status(400).json({ message });
     }
-
 });
 
 //Delete event
