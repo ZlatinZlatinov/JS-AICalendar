@@ -40,6 +40,21 @@ const swaggerOptions = {
                         }
                     }
                 },
+                UserLogin: {
+                    type: 'object',
+                    required: ['email', 'password'],
+                    properties: {
+                        email: {
+                            type: 'string',
+                            format: 'email',
+                            description: 'The email of the user'
+                        },
+                        password: {
+                            type: 'string',
+                            description: 'The password of the user'
+                        }
+                    }
+                },
                 Event: {
                     type: 'object',
                     required: ['title', 'description', 'location', 'date', 'freeSlots'],
