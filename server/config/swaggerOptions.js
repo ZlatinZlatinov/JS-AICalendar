@@ -51,7 +51,7 @@ const swaggerOptions = {
                         title: {
                             type: 'string',
                             description: 'Event Title'
-                        }, 
+                        },
                         description: {
                             type: 'string',
                             description: 'Event Description'
@@ -59,7 +59,7 @@ const swaggerOptions = {
                         location: {
                             type: 'string',
                             description: 'Event Location'
-                        }, 
+                        },
                         date: {
                             type: 'string',
                             description: 'Event start date'
@@ -67,7 +67,7 @@ const swaggerOptions = {
                         time: {
                             type: 'string',
                             description: 'Event start time'
-                        }, 
+                        },
                         freeSlots: {
                             type: 'number',
                             description: 'Available free slots'
@@ -79,6 +79,79 @@ const swaggerOptions = {
                         ownerId: {
                             type: 'string',
                             description: 'The owner of the Event'
+                        },
+                        participants: {
+                            type: 'array',
+                            items: {
+                                type: 'string'
+                            },
+                            description: 'List of string of participants ID'
+                        }
+                    }
+                },
+                EventParticipants: {
+                    type: 'object',
+                    properties: {
+                        _id: {
+                            type: 'string',
+                            description: 'ID of the Event'
+                        },
+                        title: {
+                            type: 'string',
+                            description: 'Event Title'
+                        },
+                        description: {
+                            type: 'string',
+                            description: 'Event Description'
+                        },
+                        location: {
+                            type: 'string',
+                            description: 'Event Location'
+                        },
+                        date: {
+                            type: 'string',
+                            description: 'Event start date'
+                        },
+                        time: {
+                            type: 'string',
+                            description: 'Event start time'
+                        },
+                        freeSlots: {
+                            type: 'number',
+                            description: 'Available free slots'
+                        },
+                        createdAt: {
+                            type: 'string',
+                            description: 'When the record was created'
+                        },
+                        ownerId: {
+                            type: 'string',
+                            description: 'The owner of the Event'
+                        },
+                        participants: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    _id: {
+                                        type: 'string',
+                                        description: 'ID of the user'
+                                    },
+                                    email: {
+                                        type: 'string',
+                                        description: 'The email of the user'
+                                    },
+                                    username: {
+                                        type: 'string',
+                                        description: 'The username of the user'
+                                    },
+                                    createdAt: {
+                                        type: 'string',
+                                        description: 'When was user account created'
+                                    }
+                                }
+                            },
+                            description: 'List of objects of participants'
                         }
                     }
                 },
@@ -112,7 +185,7 @@ const swaggerOptions = {
                         title: {
                             type: 'string',
                             description: 'Event Title'
-                        }, 
+                        },
                         description: {
                             type: 'string',
                             description: 'Event Description'
@@ -120,7 +193,7 @@ const swaggerOptions = {
                         location: {
                             type: 'string',
                             description: 'Event Location'
-                        }, 
+                        },
                         date: {
                             type: 'string',
                             description: 'Event start date'
@@ -128,11 +201,20 @@ const swaggerOptions = {
                         time: {
                             type: 'string',
                             description: 'Event start time'
-                        }, 
+                        },
                         freeSlots: {
                             type: 'number',
                             description: 'Available free slots'
-                        },  
+                        },
+                    }
+                },
+                AddEventParticipantRequest: {
+                    type: 'object',
+                    properties: {
+                        userId: {
+                            type: 'string',
+                            description: 'User ID'
+                        }
                     }
                 },
                 UpdateUserRequest: {
@@ -155,7 +237,7 @@ const swaggerOptions = {
                         title: {
                             type: 'string',
                             description: 'Event Title'
-                        }, 
+                        },
                         description: {
                             type: 'string',
                             description: 'Event Description'
@@ -163,7 +245,7 @@ const swaggerOptions = {
                         location: {
                             type: 'string',
                             description: 'Event Location'
-                        }, 
+                        },
                         date: {
                             type: 'string',
                             description: 'Event start date'
@@ -171,11 +253,24 @@ const swaggerOptions = {
                         time: {
                             type: 'string',
                             description: 'Event start time'
-                        }, 
+                        },
                         freeSlots: {
                             type: 'number',
                             description: 'Available free slots'
-                        },  
+                        },
+                    }
+                },
+                UpdateEventParticipantRequest: {
+                    type: 'object',
+                    properties: {
+                        email: {
+                            type: 'string',
+                            description: 'User email'
+                        },
+                        username: {
+                            type: 'string',
+                            description: 'Username'
+                        }
                     }
                 },
                 Error: {
