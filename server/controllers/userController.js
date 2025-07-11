@@ -111,7 +111,7 @@ userController.get('/:userId', async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *                 $ref: '#/components/schemas/AuthRespons'
+ *                 $ref: '#/components/schemas/AuthResponse'
  *       400:
  *         description: Bad request
  *         content:
