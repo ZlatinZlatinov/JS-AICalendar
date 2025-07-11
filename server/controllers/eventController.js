@@ -111,7 +111,7 @@ eventController.get('/:eventId', async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *                 $ref: '#/components/schemas/AuthResponse'
+ *                 $ref: '#/components/schemas/Event'
  *       400:
  *         description: Bad request
  *         content:
