@@ -55,7 +55,7 @@ eventController.get('/', async (req, res) => {
  *     summary: Get event by ID
  *     description: Returns a single event by ID
  *     tags: [Events]
- *     paramethers:
+ *     parameters:
  *       - in: path
  *         name: eventId
  *         schema: 
@@ -99,6 +99,13 @@ eventController.get('/:eventId', async (req, res) => {
  *     summary: Create new event
  *     description: Create a new event
  *     tags: [Events]
+ *     parameters:
+ *       - in: header
+ *         name: X-Authorization
+ *         schema: 
+ *           type: strind
+ *         required: true
+ *         description: Access Token
  *     requestBody:
  *       required: true
  *       content: 
@@ -163,6 +170,12 @@ eventController.post('/', async (req, res) => {
  *           type: string
  *         required: true
  *         description: The event ID
+ *       - in: header
+ *         name: X-Authorization
+ *         schema: 
+ *           type: strind
+ *         required: true
+ *         description: Access Token
  *     requestBody:
  *       required: true
  *       content: 
@@ -233,6 +246,12 @@ eventController.put('/:eventId', async (req, res) => {
  *           type: string
  *         required: true
  *         description: The event ID
+ *       - in: header
+ *         name: X-Authorization
+ *         schema: 
+ *           type: strind
+ *         required: true
+ *         description: Access Token
  *     responses:
  *       204:
  *         description: Event deleted successfully

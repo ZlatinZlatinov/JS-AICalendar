@@ -54,7 +54,7 @@ userController.get('/', async (req, res) => {
  *     summary: Get user by their ID
  *     description: Returns a single user by their ID
  *     tags: [Users]
- *     paramethers:
+ *     parameters:
  *       - in: path
  *         name: userId
  *         schema: 

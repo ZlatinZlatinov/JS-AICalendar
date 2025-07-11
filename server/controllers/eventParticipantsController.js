@@ -18,7 +18,7 @@ const { erorParser } = require('../utils/errorParser');
  *     summary: Get event participants
  *     description: Returns event and list of participants
  *     tags: [Event Participants]
- *     paramethers:
+ *     parameters:
  *       - in: path
  *         name: eventId
  *         schema: 
@@ -62,13 +62,19 @@ eventParticipantsController.get('/:eventId/participants', async (req, res) => {
  *     summary: Add Participant
  *     description: Add new participant to event
  *     tags: [Event Participants]
- *     paramethers:
+ *     parameters:
  *       - in: path
  *         name: eventId
  *         schema: 
  *           type: strind
  *         required: true
  *         description: The event ID
+ *       - in: header
+ *         name: X-Authorization
+ *         schema: 
+ *           type: strind
+ *         required: true
+ *         description: Access Token
  *     requestBody:
  *       required: true
  *       content: 
@@ -132,6 +138,12 @@ eventParticipantsController.post('/:eventId/participants', async (req, res) => {
  *           type: string
  *         required: true
  *         description: The event participant ID
+ *       - in: header
+ *         name: X-Authorization
+ *         schema: 
+ *           type: strind
+ *         required: true
+ *         description: Access Token
  *     requestBody:
  *       required: true
  *       content: 
@@ -196,6 +208,12 @@ eventParticipantsController.put('/:eventId/participants/:userId', async (req, re
  *           type: string
  *         required: true
  *         description: The user ID
+ *       - in: header
+ *         name: X-Authorization
+ *         schema: 
+ *           type: strind
+ *         required: true
+ *         description: Access Token
  *     responses:
  *       204:
  *         description: Event deleted successfully
