@@ -36,9 +36,9 @@ eventParticipantsController.post('/:eventId/participants', async (req, res) => {
 });
 
 //Uptdate event participant
-eventParticipantsController.put('/:eventId/participants', async (req, res) => {
+eventParticipantsController.put('/:eventId/participants/:userId', async (req, res) => {
     const eventId = req.params.eventId; 
-    const participantId = req.body.participantId;
+    const participantId = req.params.userId;
     const participantData = req.body.participantData;
 
     try {
@@ -53,9 +53,9 @@ eventParticipantsController.put('/:eventId/participants', async (req, res) => {
 });
 
 //Remove participant from event
-eventParticipantsController.delete('/:eventId/participants', async (req, res) => {
+eventParticipantsController.delete('/:eventId/participants/:userId', async (req, res) => {
     const eventId = req.params.eventId; 
-    const participantId = req.body.participantId;
+    const participantId = req.params.userId;
 
     try {
         const participant = await removeParticipantFromEvent(eventId, participantId);
