@@ -1,3 +1,4 @@
+const { body, validationResult } = require('express-validator');
 const { hasUser } = require('../middlewares/guard');
 const { getAllUsers, findUserById, createUser, updateUser, deleteUser } = require('../services/userService');
 const { erorParser } = require('../utils/errorParser');
@@ -120,28 +121,37 @@ userController.get('/:userId', async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  */
 //Create new user
-userController.post('/', async (req, res) => {
-    const username = req.body.username;
-    const password = req.body.password;
-    const email = req.body.email;
-    const address = req.body.address;
+userController.post('/',
+    body('email').trim().isEmail()
+        .withMessage('Invalid email address!'),
+    body('username').trim().isLength({ min: 5 })
+        .withMessage('Username should be alphanumeric and atleast 5 characters long!'),
+    body('password').trim().isLength({ min: 5 })
+        .withMessage('Password should be atleast 5 characters long!'),
+    body('address').optional({values: ""}).trim().isLength({ min: 5 })
+        .withMessage('Valid adresses are atleast 5 characters long.'),
+    async (req, res) => {
+        const username = req.body.username;
+        const password = req.body.password;
+        const email = req.body.email;
+        const address = req.body.address;
 
-    try {
-        /* const { errors } = validationResult(req);
+        try {
+            const { errors } = validationResult(req);
 
             if (errors.length > 0) {
                 throw errors;
             }
-        */
-        const token = await createUser(username, email, password, address);
-        res.json({ accessToken: token });
-    } catch (err) {
-        const message = erorParser(err);
-        console.log(message);
 
-        res.status(400).json({ message });
-    }
-});
+            const token = await createUser(username, email, password, address);
+            res.status(201).json({ accessToken: token });
+        } catch (err) {
+            const message = erorParser(err);
+            console.log(message);
+
+            res.status(400).json({ message });
+        }
+    });
 
 /**
  * @swagger
