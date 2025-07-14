@@ -3,13 +3,13 @@ const { Schema, model } = require('mongoose');
 const userSchema = new Schema({
     email: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, "User email is required!"],
+        unique: [true, "User email must be unique!"]
     },
     username: {
         type: String,
-        required: true,
-        unique: true
+        required: [true, "Username is required!"],
+        unique: [true, "Username must be unique!"]
     },
     createdAt: {
         type: Schema.Types.Date,
@@ -17,7 +17,7 @@ const userSchema = new Schema({
     },
     hashedPassword: {
         type: String,
-        required: true
+        required: [true, "User password is required!"]
     },
     address: {
         type: String
