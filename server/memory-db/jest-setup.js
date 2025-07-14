@@ -14,9 +14,9 @@ afterAll(async () => {
 });
 
 // Clear database before each test
-beforeEach(async () => {
-    await testDb.clearDatabase();
-});
+// beforeEach(async () => {
+//     await testDb.clearDatabase();
+// });
 
 // Make testDb available globally
 global.testDb = testDb;
