@@ -5,6 +5,81 @@ const { User } = require('../../models/User');
 
 const url = '/api/v1/users';
 
+describe('GET /users', () => {
+    jest.mock('../../models/User');
+    jest.mock('../../services/userService');
+
+    it('should return and empty array when no users exist', async () => {
+        const response = await request(app).get(url);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toEqual([]);
+    }); 
+
+    it('should return array of all users when users exist', async () => {
+        const user1 = await User.create({
+            username: 'user1',
+            email: 'user1@test.com',
+            hashedPassword: 'hashedpass1',
+            address: 'Address 1'
+        });
+        const user2 = await User.create({
+            username: 'user2', 
+            email: 'user2@test.com',
+            hashedPassword: 'hashedpass2',
+            address: 'Address 2'
+        }); 
+
+        const response = await request(app).get(url);
+
+        expect(response.status).toBe(200);
+        expect(Array.isArray(response.body)).toBe(true);
+        expect(response.body).toHaveLength(2);
+        expect(response.body[0].username).toBe('user1');
+        expect(response.body[1].username).toBe('user2');
+    });
+});
+
+describe('GET /users/{userId}', () => {
+    jest.mock('../../models/User');
+    jest.mock('../../services/userService');
+
+    it('should successfully return user by valid id', async () => {
+        const testUser = await User.create({
+            username: 'testuser',
+            email: 'test@example.com',
+            hashedPassword: 'hashedpass123',
+            address: 'Test Address'
+        });
+
+        console.log(testUser._id);
+
+        const response = await request(app).get(`${url}/${testUser._id}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.username).toBe(testUser.username);
+        expect(response.body.email).toBe(testUser.email);
+    });
+
+    it('should return status 404 when user does not exist', async () => {
+        const userId = '6876349536f9fa943b2152bc';
+
+        const response = await request(app).get(`${url}/${userId}`);
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("User not found!");
+    });
+
+    it('should return status 404 with invalid userId', async () => {
+        const fakeId = 'abcd123456';
+
+        const response = await request(app).get(`${url}/${fakeId}`);
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe("Invalid ID field!");
+    });
+});
+
 describe('POST /users', () => {
     jest.mock('../../models/User');
     jest.mock('../../services/userService');
