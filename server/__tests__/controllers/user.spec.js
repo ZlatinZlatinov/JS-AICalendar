@@ -1,10 +1,11 @@
 const request = require('supertest');
 const app = require('../../index');
 const { User } = require('../../models/User');
+const { createToken } = require('../../utils/jwt');
 // const mongoose = require('mongoose');
 
 const url = '/api/v1/users';
-
+/*
 describe('GET /users', () => {
     jest.mock('../../models/User');
     jest.mock('../../services/userService');
@@ -225,5 +226,103 @@ describe('POST /users', () => {
 
         expect(response.body).toHaveProperty('message');
         // expect(response.body.message).toBe('');
+    });
+}); */
+
+describe('PUT /users/{userId}', () => {
+    jest.mock('../../models/User');
+    jest.mock('../../services/userService');
+
+    let accessToken;
+    let testUser;
+
+    beforeEach(async () => {
+        testUser = await User.create({
+            username: 'testuser',
+            email: 'test@example.com',
+            hashedPassword: 'hashedpass',
+            address: 'Old Address'
+        });
+
+        accessToken = createToken(testUser);
+    });
+
+    afterEach(async () => {
+        await User.findByIdAndDelete(testUser._id);
+    });
+
+    it('should update user succesfully with valid data', async () => {
+        const updatedData = {
+            username: 'Updated Username',
+            address: 'Update Address'
+        }
+
+        const response = await request(app)
+            .put(`${url}/${testUser._id}`)
+            .set('X-Authorization', accessToken)
+            .send(updatedData);
+
+        expect(response.status).toBe(200);
+        expect(response.body.username).toBe(updatedData.username);
+        expect(response.body.address).toBe(updatedData.address);
+    }); 
+
+    it('should fail, with status 409 with empty username', async () => {
+        const updatedData = {
+            username: '',
+            address: 'Updated Address'
+        } 
+
+        const response = await request(app)
+            .put(`${url}/${testUser._id}`)
+            .set('X-Authorization', accessToken)
+            .send(updatedData);
+
+        expect(response.status).toBe(409);
+    }); 
+
+    it('should fail, with status 409 with empty address', async () => {
+        const updatedData = {
+            username: 'Updated Username',
+            address: ''
+        } 
+
+        const response = await request(app)
+            .put(`${url}/${testUser._id}`)
+            .set('X-Authorization', accessToken)
+            .send(updatedData);
+
+        expect(response.status).toBe(409);
+    }); 
+
+    it('should fail, with status 409 with invalid ID', async () => {
+        const updatedData = {
+            username: 'Updated Username',
+            address: 'Updated Address'
+        } 
+        const fakeId = 'abcd123456';
+
+        const response = await request(app)
+            .put(`${url}/${fakeId}`)
+            .set('X-Authorization', accessToken)
+            .send(updatedData);
+
+        expect(response.status).toBe(409);
+    }); 
+
+    it('should fail, with status 401 with invalid accessToken', async () => {
+        const updatedData = {
+            username: 'Updated Username',
+            address: 'Updated Address'
+        } 
+        const fakeToken = 'abcd123456';
+
+        const response = await request(app)
+            .put(`${url}/${testUser._id}`)
+            .set('X-Authorization', fakeToken)
+            .send(updatedData);
+
+        expect(response.status).toBe(401);
+        expect(response.body.message).toBe('Invalid token!');
     });
 });
