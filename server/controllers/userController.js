@@ -1,4 +1,4 @@
-const { body, validationResult } = require('express-validator');
+const { body, param, validationResult } = require('express-validator');
 const { hasUser } = require('../middlewares/guard');
 const { getAllUsers, findUserById, createUser, updateUser, deleteUser } = require('../services/userService');
 const { erorParser } = require('../utils/errorParser');
@@ -77,20 +77,33 @@ userController.get('/', async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  */
 //Get user details
-userController.get('/:userId', async (req, res) => {
-    const userId = req.params.userId;
+userController.get('/:userId',
+    param('userId').trim().notEmpty().isMongoId()
+        .withMessage("Invalid ID field!"),
+    async (req, res) => {
+        const userId = req.params.userId;
 
-    try {
-        const userData = await findUserById(userId);
+        try {
+            const { errors } = validationResult(req);
 
-        res.json(userData);
-    } catch (err) {
-        const message = erorParser(err);
-        console.log(message);
+            if (errors.length > 0) {
+                throw errors;
+            }
 
-        res.status(404).json({ message: "User not found!" });
-    }
-});
+            const userData = await findUserById(userId);
+
+            if (!userData) {
+                throw new Error("User not found!")
+            }
+
+            res.json(userData);
+        } catch (err) {
+            const message = erorParser(err);
+            console.log(message);
+
+            res.status(404).json({ message });
+        }
+    });
 
 /**
  * @swagger
@@ -127,7 +140,7 @@ userController.post('/',
         .withMessage('Username should be atleast 5 characters long!'),
     body('password').trim().notEmpty().isLength({ min: 5 })
         .withMessage('Password should be atleast 5 characters long!'),
-    body('address').optional({values: ""}).trim().isLength({ min: 5 })
+    body('address').optional({ values: "" }).trim().isLength({ min: 5 })
         .withMessage('Valid adresses are atleast 5 characters long.'),
     async (req, res) => {
         const username = req.body.username;
