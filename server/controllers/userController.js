@@ -82,7 +82,6 @@ userController.get('/:userId', async (req, res) => {
 
     try {
         const userData = await findUserById(userId);
-        console.log(userData);
 
         res.json(userData);
     } catch (err) {
@@ -122,11 +121,11 @@ userController.get('/:userId', async (req, res) => {
  */
 //Create new user
 userController.post('/',
-    body('email').trim().isEmail()
+    body('email').trim().notEmpty().isEmail()
         .withMessage('Invalid email address!'),
-    body('username').trim().isLength({ min: 5 })
-        .withMessage('Username should be alphanumeric and atleast 5 characters long!'),
-    body('password').trim().isLength({ min: 5 })
+    body('username').trim().notEmpty().isLength({ min: 5 })
+        .withMessage('Username should be atleast 5 characters long!'),
+    body('password').trim().notEmpty().isLength({ min: 5 })
         .withMessage('Password should be atleast 5 characters long!'),
     body('address').optional({values: ""}).trim().isLength({ min: 5 })
         .withMessage('Valid adresses are atleast 5 characters long.'),
