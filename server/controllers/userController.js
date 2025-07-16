@@ -134,8 +134,6 @@ userController.get('/:userId',
  */
 //Create new user
 userController.post('/',
-    header('X-Authorization').trim().notEmpty().isJWT()
-        .withMessage('X-Authorization header is required!'),
     body('email').trim().notEmpty().isEmail()
         .withMessage('Invalid email address!'),
     body('username').trim().notEmpty().isLength({ min: 5 })
@@ -230,7 +228,12 @@ userController.put('/:userId',
                 throw errors;
             }
 
-            const updatedUser = await updateUser(userId, { address, username });
+            const updatedUser = await updateUser(userId, { address, username }); 
+
+            if(!updatedUser) {
+                throw new Error('No such user!');
+            }
+
             res.json(updatedUser);
         } catch (err) {
             const message = erorParser(err);
@@ -281,13 +284,24 @@ userController.delete('/:userId',
         const userId = req.params.userId;
 
         try {
-            await deleteUser(userId);
+            const { errors } = validationResult(req);
+
+            if (errors.length > 0) {
+                throw errors;
+            }
+
+            const isExisting = await deleteUser(userId);
+
+            if (!isExisting) {
+                throw new Error('No such user!');
+            }
+
             res.status(204).json({ message: "User deleted!" });
         } catch (err) {
             const message = erorParser(err);
             console.log(message);
 
-            res.status(404).json({ message: "No such user!" });
+            res.status(404).json({ message });
         }
     });
 
