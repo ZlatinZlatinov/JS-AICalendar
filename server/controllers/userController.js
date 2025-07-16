@@ -1,4 +1,4 @@
-const { body, param, validationResult } = require('express-validator');
+const { body, param, header, validationResult } = require('express-validator');
 const { hasUser } = require('../middlewares/guard');
 const { getAllUsers, findUserById, createUser, updateUser, deleteUser } = require('../services/userService');
 const { erorParser } = require('../utils/errorParser');
@@ -134,6 +134,8 @@ userController.get('/:userId',
  */
 //Create new user
 userController.post('/',
+    header('X-Authorization').trim().notEmpty().isJWT()
+        .withMessage('X-Authorization header is required!'),
     body('email').trim().notEmpty().isEmail()
         .withMessage('Invalid email address!'),
     body('username').trim().notEmpty().isLength({ min: 5 })
@@ -206,21 +208,37 @@ userController.post('/',
  *               $ref: '#/components/schemas/Error'
  */
 //Update user
-userController.put('/:userId', hasUser(), async (req, res) => {
-    const userId = req.params.userId;
-    const address = req.body.address;
-    const username = req.body.username;
+userController.put('/:userId',
+    header('X-Authorization').trim().notEmpty().isJWT()
+        .withMessage('X-Authorization header is required!'),
+    param('userId').trim().notEmpty().isMongoId()
+        .withMessage("Invalid ID field!"),
+    body('username').trim().notEmpty().isLength({ min: 5 })
+        .withMessage('Username should be atleast 5 characters long'),
+    body('address').trim().notEmpty().isLength({ min: 5 })
+        .withMessage('Address should be 5 characters long!'),
+    hasUser(),
+    async (req, res) => {
+        const userId = req.params.userId;
+        const address = req.body.address;
+        const username = req.body.username;
 
-    try {
-        const updatedUser = await updateUser(userId, { address, username });
-        res.json(updatedUser);
-    } catch (err) {
-        const message = erorParser(err);
-        console.log(message);
+        try {
+            const { errors } = validationResult(req);
 
-        res.status(409).json({ message });
-    }
-});
+            if (errors.length > 0) {
+                throw errors;
+            }
+
+            const updatedUser = await updateUser(userId, { address, username });
+            res.json(updatedUser);
+        } catch (err) {
+            const message = erorParser(err);
+            console.log(message);
+
+            res.status(409).json({ message });
+        }
+    });
 
 /**
  * @swagger
@@ -253,19 +271,25 @@ userController.put('/:userId', hasUser(), async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  */
 //Delete user
-userController.delete('/:userId', hasUser(), async (req, res) => {
-    const userId = req.params.userId;
+userController.delete('/:userId',
+    header('X-Authorization').trim().notEmpty().isJWT()
+        .withMessage('X-Authorization header is required!'),
+    param('userId').trim().notEmpty().isMongoId()
+        .withMessage("Invalid ID field!"),
+    hasUser(),
+    async (req, res) => {
+        const userId = req.params.userId;
 
-    try {
-        await deleteUser(userId);
-        res.status(204).json({ message: "User deleted!" });
-    } catch (err) {
-        const message = erorParser(err);
-        console.log(message);
+        try {
+            await deleteUser(userId);
+            res.status(204).json({ message: "User deleted!" });
+        } catch (err) {
+            const message = erorParser(err);
+            console.log(message);
 
-        res.status(404).json({ message: "No such user!" });
-    }
-});
+            res.status(404).json({ message: "No such user!" });
+        }
+    });
 
 module.exports = {
     userController
