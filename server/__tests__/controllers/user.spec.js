@@ -2,20 +2,29 @@ const request = require('supertest');
 const app = require('../../index');
 const { User } = require('../../models/User');
 const { createToken } = require('../../utils/jwt');
-// const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const url = '/api/v1/users';
-/*
+
 describe('GET /users', () => {
     jest.mock('../../models/User');
     jest.mock('../../services/userService');
+
+    afterAll(async () => {
+        const collections = mongoose.connection.collections;
+
+        for (const key in collections) {
+            const collection = collections[key];
+            await collection.deleteMany({});
+        }
+    });
 
     it('should return and empty array when no users exist', async () => {
         const response = await request(app).get(url);
 
         expect(response.status).toBe(200);
         expect(response.body).toEqual([]);
-    }); 
+    });
 
     it('should return array of all users when users exist', async () => {
         const user1 = await User.create({
@@ -25,11 +34,11 @@ describe('GET /users', () => {
             address: 'Address 1'
         });
         const user2 = await User.create({
-            username: 'user2', 
+            username: 'user2',
             email: 'user2@test.com',
             hashedPassword: 'hashedpass2',
             address: 'Address 2'
-        }); 
+        });
 
         const response = await request(app).get(url);
 
@@ -44,6 +53,15 @@ describe('GET /users', () => {
 describe('GET /users/{userId}', () => {
     jest.mock('../../models/User');
     jest.mock('../../services/userService');
+
+    afterAll(async () => {
+        const collections = mongoose.connection.collections;
+
+        for (const key in collections) {
+            const collection = collections[key];
+            await collection.deleteMany({});
+        }
+    });
 
     it('should successfully return user by valid id', async () => {
         const testUser = await User.create({
@@ -85,6 +103,15 @@ describe('POST /users', () => {
     jest.mock('../../models/User');
     jest.mock('../../services/userService');
 
+    afterAll(async () => {
+        const collections = mongoose.connection.collections;
+
+        for (const key in collections) {
+            const collection = collections[key];
+            await collection.deleteMany({});
+        }
+    });
+
     it('should create a new user successfully', async () => {
         const userData = {
             username: 'john_doe',
@@ -115,16 +142,16 @@ describe('POST /users', () => {
             email: 'john_doe@example.com',
             password: 'password123',
             address: 'New York'
-        }; 
+        };
 
         const response = await request(app)
             .post(url)
             .send(userData)
-            .expect(400) 
+            .expect(400)
 
         expect(response.body).toHaveProperty('message');
         expect(response.body.message).toBe('This email already exists!');
-    }); 
+    });
 
     it('should fail, with status 400, to create user with empty email', async () => {
         const userData = {
@@ -132,16 +159,16 @@ describe('POST /users', () => {
             email: '',
             password: 'password123',
             address: 'New York'
-        }; 
+        };
 
         const response = await request(app)
             .post(url)
             .send(userData)
-            .expect(400); 
+            .expect(400);
 
         expect(response.body).toHaveProperty('message');
         // expect(response.body.message).toBe('Invalid email address!');
-    }); 
+    });
 
     it('should fail, with status 400, to create user with invalid email', async () => {
         const userData = {
@@ -149,12 +176,12 @@ describe('POST /users', () => {
             email: 'john@doe',
             password: 'password123',
             address: 'New York'
-        }; 
+        };
 
         const response = await request(app)
             .post(url)
             .send(userData)
-            .expect(400); 
+            .expect(400);
 
         expect(response.body).toHaveProperty('message');
         // expect(response.body.message).toBe('');
@@ -166,16 +193,16 @@ describe('POST /users', () => {
             email: 'john2@example.com',
             password: 'password123',
             address: 'New York'
-        }; 
+        };
 
         const response = await request(app)
             .post(url)
             .send(userData)
-            .expect(400); 
+            .expect(400);
 
         expect(response.body).toHaveProperty('message');
         // expect(response.body.message).toBe('');
-    }); 
+    });
 
     it('should fail to create user with username less than 5 characters', async () => {
         const userData = {
@@ -183,12 +210,12 @@ describe('POST /users', () => {
             email: 'johnny@example.com',
             password: 'password123',
             address: 'New York'
-        }; 
+        };
 
         const response = await request(app)
             .post(url)
             .send(userData)
-            .expect(400); 
+            .expect(400);
 
         expect(response.body).toHaveProperty('message');
         // expect(response.body.message).toBe('');
@@ -200,16 +227,16 @@ describe('POST /users', () => {
             email: 'john2@example.com',
             password: '',
             address: 'New York'
-        }; 
+        };
 
         const response = await request(app)
             .post(url)
             .send(userData)
-            .expect(400); 
+            .expect(400);
 
         expect(response.body).toHaveProperty('message');
         // expect(response.body.message).toBe('');
-    }); 
+    });
 
     it('should fail to create user with password less than 5 characters', async () => {
         const userData = {
@@ -217,17 +244,17 @@ describe('POST /users', () => {
             email: 'john2@example.com',
             password: '',
             address: 'New York'
-        }; 
+        };
 
         const response = await request(app)
             .post(url)
             .send(userData)
-            .expect(400); 
+            .expect(400);
 
         expect(response.body).toHaveProperty('message');
         // expect(response.body.message).toBe('');
     });
-}); */
+});
 
 describe('PUT /users/{userId}', () => {
     jest.mock('../../models/User');
@@ -265,13 +292,13 @@ describe('PUT /users/{userId}', () => {
         expect(response.status).toBe(200);
         expect(response.body.username).toBe(updatedData.username);
         expect(response.body.address).toBe(updatedData.address);
-    }); 
+    });
 
     it('should fail, with status 409 with empty username', async () => {
         const updatedData = {
             username: '',
             address: 'Updated Address'
-        } 
+        }
 
         const response = await request(app)
             .put(`${url}/${testUser._id}`)
@@ -279,13 +306,13 @@ describe('PUT /users/{userId}', () => {
             .send(updatedData);
 
         expect(response.status).toBe(409);
-    }); 
+    });
 
     it('should fail, with status 409 with empty address', async () => {
         const updatedData = {
             username: 'Updated Username',
             address: ''
-        } 
+        }
 
         const response = await request(app)
             .put(`${url}/${testUser._id}`)
@@ -293,13 +320,13 @@ describe('PUT /users/{userId}', () => {
             .send(updatedData);
 
         expect(response.status).toBe(409);
-    }); 
+    });
 
     it('should fail, with status 409 with invalid ID', async () => {
         const updatedData = {
             username: 'Updated Username',
             address: 'Updated Address'
-        } 
+        }
         const fakeId = 'abcd123456';
 
         const response = await request(app)
@@ -308,13 +335,13 @@ describe('PUT /users/{userId}', () => {
             .send(updatedData);
 
         expect(response.status).toBe(409);
-    }); 
+    });
 
     it('should fail, with status 401 with invalid accessToken', async () => {
         const updatedData = {
             username: 'Updated Username',
             address: 'Updated Address'
-        } 
+        }
         const fakeToken = 'abcd123456';
 
         const response = await request(app)
@@ -324,5 +351,69 @@ describe('PUT /users/{userId}', () => {
 
         expect(response.status).toBe(401);
         expect(response.body.message).toBe('Invalid token!');
+    });
+});
+
+describe('DELETE /users/{userId}', () => {
+    jest.mock('../../models/User');
+    jest.mock('../../services/userService');
+
+    let accessToken;
+    let testUser;
+
+    beforeEach(async () => {
+        testUser = await User.create({
+            username: 'testuser',
+            email: 'test@example.com',
+            hashedPassword: 'hashedpass',
+            address: 'Old Address'
+        });
+
+        accessToken = createToken(testUser);
+    });
+
+    afterEach(async () => {
+        await User.findByIdAndDelete(testUser._id);
+    });
+
+    it('should successfully delete user by valid ID', async () => {
+        const response = await request(app)
+            .delete(`${url}/${testUser._id}`)
+            .set('X-Authorization', accessToken);
+
+        expect(response.status).toBe(204);
+        // expect(response.body.message).toBe('User deleted!');
+    });
+
+    it('should fail with status 404 when user does not exist', async () => {
+        const fakeId = '6876349536f9fa943b2152bc';
+
+        const response = await request(app)
+            .delete(`${url}/${fakeId}`)
+            .set('X-Authorization', accessToken);
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe('No such user!');
+    });
+
+    it('should fail with status 404 with invalid userId', async () => {
+        const fakeId = '6876349536f';
+
+        const response = await request(app)
+            .delete(`${url}/${fakeId}`)
+            .set('X-Authorization', accessToken)
+
+        expect(response.status).toBe(404);
+        expect(response.body.message).toBe('Invalid ID field!');
+    });
+
+    it('should fail with invalid access token', async () => {
+        const fakeToken = 'abcd123456';
+
+        const response = await request(app)
+            .delete(`${url}/${testUser._id}`)
+            .set('X-Authorization', fakeToken);
+
+        expect(response.status).toBe(401);
     });
 });
